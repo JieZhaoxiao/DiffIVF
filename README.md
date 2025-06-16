@@ -1,72 +1,45 @@
-## TDAdv ICONIP 2025
+## DiffIVF PRCV 2025
  
-   The code repository for our paper TDAdv: Improving Transferability of Unrestricted Adversarial Examples with Text-Guided Diffusion.
-## Overview
-   <img src="./Overview.png" width="90%"/>
-   
-If the image doesn't display properly, you can click [here](Overview.png) to view our framework.
-## Requirements
+   Codes for DiffIVF: Infrared-Visible Image Fusion Via  Diffusion Models For Object Detection.
+## Overall Framework
+   <img src="./fig/DiffIVF.png" width="99%"/>
 
-1. Hardware Requirements
-    - GPU: 1x high-end NVIDIA GPU with at least 24GB memory
-    - Memory: At least 40GB of storage memory
+## Abstract
+   In this work, we propose an early-fusion of infrared images and visible images to improve performance of object detectors under complex environments. We frame the fusion of infrared and visible images as a generation task, and propose a simple yet effective scheme built on diffusion model with guided image to generate the fused images, called DiffIVF. How to quickly generate fused images with high texture and intensity fidelity is an important issue for object detection. We address these issues in the whole process of the diffusion model. In the forward process, a cosine noise schedule is proposed to improve the smoothness of the noise level, which stabilizes the diffusion process for the fast sampling. In the reverse process, a large sampling interval is utilized to accelerate the denoising process. To compensate for the information loss during fast sampling, the visible image signal is selected to guide the fusion at each denoising timestep, aiming at enriching textural details and structural information. The guided image weight averaged with an intermediate fused image inputs into a pre-trained U-net for the next time of reversing. Notice that the proposed method needs no training or fine-tuning, which enables us exclusively to make use of off-the-shelf models for fusion. Experimental results show that the proposed method obtains better image quality scores of textures and intensity fidelity than previous methods, thus triggering better detection performance for the infrared-visible fused images.
 
-2. Software Requirements
-    - Python: 3.10
-    - CUDA: 12.2
+## Dataset
+   Please download the dataset [MSRS](https://github.com/Linfeng-Tang/MSRS), [M3FD](https://github.com/JinyuanLiu-CV/TarDAL), [LLVIP](https://github.com/bupt-ai-cz/LLVIP) and put them into [datasets](datasets). You can download them from here.
 
-   To install other requirements:
-
+## Enviroment
+Important packages:
    ```bash
-   pip install -r requirements.txt
-   ```
-3. Datasets
-   - Please download the dataset [ImageNet-Compatible](https://github.com/cleverhans-lab/cleverhans/tree/master/cleverhans_v3.1.0/examples/nips17_adversarial_competition/dataset) and then change the settings of `--images_root` and `--label_path` in [main.py](main.py)
-
-4. Pre-trained Models
-   - We adopt [Stable Diffusion 2.1](https://huggingface.co/stabilityai/stable-diffusion-2-1-base) as our diffusion model, you can download and load the pretrained weight by setting `--pretrained_diffusion_path="stabilityai/stable-diffusion-2-1-base"` in [main.py](main.py). You can download them from here.
-   - Other models used are [Vit-GPT2](https://huggingface.co/nlpconnect/vit-gpt2-image-captioning), [BLIP](https://huggingface.co/Salesforce/blip-image-captioning-base), [BLIP2](https://huggingface.co/Salesforce/blip2-opt-2.7b), and [GIT](https://huggingface.co/microsoft/git-base). You can download them from here.
-
-## Misleading Prompts Generation
-  We provide the code for the misleading prompts generation by Vit-GPT2 and BLIP2. Other generative models are similar.  You can run the following code to generate prompts.
-   ```bash
-   python text_BLIP2.py
-   
-   python text_VitGPT.py
+   lpips==0.1.4
+   matplotlib==3.7.2
+   numpy==1.24.3
+   opencv_python==4.5.3.56
+   packaging==23.1
+   Pillow==10.0.0
+   Pillow==9.4.0
+   Pillow==10.0.1
+   PyYAML==5.4.1
+   PyYAML==6.0.1
+   scikit_image==0.19.3
+   scipy==1.9.3
+   torch==1.8.1+cu111
+   torchvision==0.9.1+cu111
+   tqdm==4.62.0
    ```
 
-## Crafting Unrestricted Adversarial Examples
-   We provide the code for the craft unrestricted adversarial examples. You can view our code to see how our method is implemented. You can run the following code to generate it.
+## Pre-trained Model
+   We adopt [guided-diffusion](https://github.com/openai/guided-diffusion) as our diffusion model, you can download the checkpoint "256x256_diffusion_uncond.pt" and paste it to [models](models). You can download them from here.
+
+## Generate Fused Image
+   We provide the code for the generate fused image. You can view our code to see how our method is implemented. You can run the following code to generate it.
    ```bash
    python main.py
    ```
-## Evaluation
-   
-   We here provide unrestricted adversarial examples crafted for Res-50 using our method and its enhanced version. We store them in .[/output](output). Simply run eval_attack.py to perform attacks against the official PyTorch ResNet50 model. You can modify the attack parameter at the [eval_attack.py](eval_attack.py).  
-   
-   For eval attack, please run:
+## Qualitative fusion results.
+   <img src="./fig/Day.png" width="99%"/>
 
-   ```bash
-   python eval_attack.py
-   ```
+   <img src="./fig/Night.png" width="99%"/>
 
-   You can also run eval_fid.py to get the evaluated FID result.
-
-   For eval FID, please run:
-
-   ```bash
-   python eval_fid.py
-   ```
-
-   You can also run eval_iqa.py to get the evaluated SSIM, PSNR and LPIPS results.
-
-   For eval SSIM, PSNR and LPIPS, please run:
-   
-   ```bash
-   python eval_iqa.py 
-   ```
-
-## Visualization
-   We provide more visual qualitative comparisons, so you can see the difference in image quality between our method and the comparison method. Please zoom in for a better view.
-
-   <img src="./Qualitative comparison.png" width="90%"/>
